@@ -1,13 +1,15 @@
-var express = require('express'),
+const express = require('express'),
   session = require('express-session'),
   passport = require('passport'),
   SpotifyStrategy = require('passport-spotify').Strategy,
   consolidate = require('consolidate');
+  axios = require('axios')
 
 require('dotenv').config();
 
-var port = 8888;
-var authCallbackPath = '/auth/spotify/callback';
+const port = 8888;
+const authCallbackPath = '/auth/spotify/callback';
+var token = ''
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -42,6 +44,7 @@ passport.use(
         // represent the logged-in user. In a typical application, you would want
         // to associate the spotify account with a user record in your database,
         // and return that user instead.
+        token = accessToken; 
         return done(null, profile);
       });
     }
@@ -79,7 +82,15 @@ app.get('/login', function (req, res) {
 });
 
 app.get('/playlists', ensureAuthenticated, function (req, res) {
-  res.render('playlists.html', {playlists: req.user})
+  axios.get('https://api.spotify.com/v1/me/playlists', {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    }
+  }).then(result => {
+    console.log(result.data.items)
+    res.render('playlists.html', {user: req.user, playlists:result.data})
+  })
 })
 
 // GET /auth/spotify

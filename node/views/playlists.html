@@ -1,6 +1,41 @@
 {% extends 'layout.html' %} {% block content %}
-<script>
-  console.log('{{playlists}}')
-</script>
-<p>Playlists: {{ playlists }}</p>
+<p>Playlists:</p>
+<ul>
+  {% for plist in playlists.items %}
+  <li>{{plist.name}}: {{plist.description}}</li>
+  {% endfor %}
+</ul>
 {% endblock %}
+
+{# playlist object is something like this:
+  
+  {
+    collaborative: false,
+    description: 'Spotify Wrapped presents the songs that you loved most this year.',
+    external_urls: {
+      spotify: 'https://open.spotify.com/playlist/37i9dQZF1EUMDoJuT8yJsl'
+    },
+    href: 'https://api.spotify.com/v1/playlists/37i9dQZF1EUMDoJuT8yJsl',
+    id: '37i9dQZF1EUMDoJuT8yJsl',
+    images: [ [Object] ],
+    name: 'Your Top Songs 2021',
+    owner: {
+      display_name: 'Spotify',
+      external_urls: [Object],
+      href: 'https://api.spotify.com/v1/users/spotify',
+      id: 'spotify',
+      type: 'user',
+      uri: 'spotify:user:spotify'
+    },
+    primary_color: null,
+    public: false,
+    snapshot_id: 'MCwwMDAwMDAwMDRjMjA1ZTAxM2E0NDUyNGM2MGQzYjk5ZjJiNTJmZThh',
+    tracks: {
+      href: 'https://api.spotify.com/v1/playlists/37i9dQZF1EUMDoJuT8yJsl/tracks',
+      total: 100
+    },
+    type: 'playlist',
+    uri: 'spotify:playlist:37i9dQZF1EUMDoJuT8yJsl'
+  },
+  ...
+  #}
