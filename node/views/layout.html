@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Spotify Example</title>
+</head>
+
+<body>
+	{% if not user %}
+	<p>
+		<a href="/">Home</a> |
+		<a href="/login">Log In</a>
+	</p>
+	{% else %}
+	<p>
+		<a href="/">Home</a> |
+		<a href="/account">Account</a> |
+		<a href="/playlists">Playlists</a> |
+		<a href="/logout">Log Out</a>
+	</p>
+	{% endif %} {% block content %}{% endblock %}
+</body>
+
+</html>
