@@ -88,7 +88,6 @@ app.get('/playlists', ensureAuthenticated, function (req, res) {
       'Authorization': 'Bearer ' + token
     }
   }).then(result => {
-    console.log(result.data.items)
     res.render('playlists.html', {user: req.user, playlists:result.data})
   })
 })
