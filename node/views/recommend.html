@@ -43,7 +43,7 @@
   <ul style="height: 1080px; overflow: scroll;">
     {% for item in trackObj.items %}
     <li style="height: 40px; list-style-type:decimal">
-        <input onchange="check(this.id, {{trackObj.items | length}})" id='check-{{loop.index}}' type="checkbox">
+        <input onchange="check(this.id, '{{trackObj.items | length}}')" id='check-{{loop.index}}' type="checkbox">
         <img style="width: 40px; height: 40px; vertical-align: middle;" src="{{item.track.album.images[0].url}}" />  - {{item.track.name}}
         <p id="track-{{loop.index}}" style="opacity: 0;">{{item.track.id}}</p>
     </li>
@@ -52,7 +52,7 @@
   </ul>
   <div>
     <label id="count">0</label><label>/10 Selected</label>
-    <button onclick="getRecommendation({{trackObj.items | length}})">Recommend</button>
+    <button onclick="getRecommendation('{{trackObj.items | length}}')">Recommend</button>
   </div>
 </div>
 {% endblock %}

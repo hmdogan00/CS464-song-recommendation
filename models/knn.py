@@ -2,8 +2,10 @@ import numpy as np
 import sys
 import pandas as pd
 import json
+import os
 
-location = "/Users/hamimertdogan/Desktop/projects/CS464-song-recommendation/data/SpotifyFeatures.csv"
+dirname = os.path.dirname(__file__)
+location = os.path.join(dirname, '../data/SpotifyFeatures.csv')
 selected = -1
 id = -1
 if len(sys.argv) > 1:
@@ -30,12 +32,12 @@ original_data = np.array(original_data1,"float64")
 train_data = original_data[:141420,:]
 
 test_data = original_data[141421:,:]
-track_number = 0;
+track_number = 0
 track_selected = test_data[track_number,:]
 
 distances = np.linalg.norm(train_data - selected, axis=1) # to compute euclidean distance
 
-k = 2;
+k = 2
 
 nearest_neighbors_ids = distances.argsort()[:k] # to find nearest two neighbors
 
