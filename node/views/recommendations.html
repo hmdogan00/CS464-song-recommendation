@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Spotify Example</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+    }
+    </style>
+  <script>
+    function parseArray(str){
+        const recIndex = str.indexOf('recommendations');
+        const tokenIndex = str.indexOf('token');
+        let recStr = str.substring(recIndex + 18, tokenIndex - 3)
+        const token = str.substring(tokenIndex + 8, str.length - 2)
+        recStr = recStr.replace(/\\n|"|\[|\]|\\/g, '');
+        recStr = recStr.replace(/,/g, ' ');
+        return [recStr.split(' '), token];
+      }
+
+      function getArtistString(artistArr){
+        if (artistArr.length < 1) return '';
+        if (artistArr.length === 1) return artistArr[0].name;
+
+        let result = artistArr[0].name + ' ft. ' + artistArr[1].name;
+        if (artistArr.length === 2) return result;
+
+        for (i = 2; i < artistArr.length; i++){
+          result += ', ' + artistArr[i].name; 
+        }
+        return result;
+      }
+    
+      const initialize = () => {
+        const [array, token] = parseArray(localStorage.getItem('rec-ids'));
+        const ul = document.getElementById('list');
+        let i = 1;
+        for (id of array){
+          fetch('https://api.spotify.com/v1/tracks/'+id, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            }
+          }).then(res => {
+            return res.text().then(text => {
+              track = JSON.parse(text);
+              const tr = document.createElement('tr');
+
+              const no = document.createElement('td');
+              no.innerHTML = i;
+              i++;
+              const name = document.createElement('td');
+              name.innerHTML = track.name
+
+              const album = document.createElement('td');
+              album.innerHTML = track.album.name
+
+              const artist = document.createElement('td');
+              artist.innerHTML = getArtistString(track.artists)
+
+              tr.appendChild(no);
+              tr.appendChild(name);
+              tr.appendChild(album);
+              tr.appendChild(artist);
+              ul.appendChild(tr);
+            })
+          })
+        }
+      }
+    
+    
+  </script>
+</head> 
+<body onload="initialize()">
+    <p>Recommended Playlist:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Track Name</th>
+          <th>Album</th>
+          <th>Artist</th>
+        </tr>
+    </thead>
+    <tbody id="list">
+    </tbody>
+    </table>
+</body>
+
+</html>

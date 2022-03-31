@@ -3,8 +3,8 @@
 <ul>
   {% for plist in playlists.items %}
   <li style="width: 1300px; height: 40px; list-style-type: none; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">
-    <a target="_blank" style="text-decoration:none; color: black;" href='{{plist.external_urls.spotify}}'>
-      <img style="width: 40px; height: 40px; vertical-align: middle;" src="{{plist.images[0].url}}" />&nbsp - {{plist.name}}: {{plist.description}}
+    <a style="text-decoration:none; color: black;" href='/recommend/{{plist.id}}'>
+      - Choose from: <img style="width: 40px; height: 40px; vertical-align: middle;" src="{{plist.images[0].url}}" />  - {{plist.name}}
     </a>
   </li>
   <br>

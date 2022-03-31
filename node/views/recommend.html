@@ -1,0 +1,122 @@
+{% extends 'layout.html' %} {% block content %}
+<script>
+  function check(id, length){
+    count = 0;
+    isBigger = false
+    for (i = 1; i <= length; i++){
+      if (document.getElementById('check-'+i).checked){
+        count++
+      }
+      if (count > 10) isBigger = true;
+    }
+    if (isBigger) {
+      document.getElementById('check-' + id).checked = false
+    }
+    else{
+      const l = document.getElementById('count')
+      l.innerHTML = count
+    }
+  }
+
+  function getRecommendation(length){
+    selectedArr = []
+    for (i = 1; i <= length; i++){
+      if (document.getElementById('check-'+i).checked){
+        selectedArr.push(document.getElementById('track-'+i).innerHTML)
+      }
+    }
+    s = ''
+    selectedArr.forEach(e => {
+      s += e + ','
+    });
+    s = s.substring(0, s.length - 1)
+    fetch(`/recommend-knn?ids=${s}`).then(res => { 
+      return res.text().then(text => {
+        localStorage.setItem('rec-ids', text)
+        window.location.href = '/recommendations'
+      });
+    });
+  }
+</script>
+<p>Tracks:</p>
+<div style="display: flex; flex-direction: row;">
+  <ul style="height: 1080px; overflow: scroll;">
+    {% for item in trackObj.items %}
+    <li style="height: 40px; list-style-type:decimal">
+        <input onchange="check(this.id, {{trackObj.items | length}})" id='check-{{loop.index}}' type="checkbox">
+        <img style="width: 40px; height: 40px; vertical-align: middle;" src="{{item.track.album.images[0].url}}" />  - {{item.track.name}}
+        <p id="track-{{loop.index}}" style="opacity: 0;">{{item.track.id}}</p>
+    </li>
+    <br>
+    {% endfor %}
+  </ul>
+  <div>
+    <label id="count">0</label><label>/10 Selected</label>
+    <button onclick="getRecommendation({{trackObj.items | length}})">Recommend</button>
+  </div>
+</div>
+{% endblock %}
+{# example track is below: 
+{
+  added_at: '2022-03-31T16:57:02Z',
+  added_by: {
+    external_urls: { spotify: 'https://open.spotify.com/user/' },
+    href: 'https://api.spotify.com/v1/users/',
+    id: '',
+    type: 'user',
+    uri: 'spotify:user:'
+  },
+  is_local: false,
+  primary_color: null,
+  track: {
+    album: {
+      album_type: 'album',
+      artists: [Array],
+      available_markets: [Array],
+      external_urls: [Object],
+      href: 'https://api.spotify.com/v1/albums/4eLPsYPBmXABThSJ821sqY',
+      id: '4eLPsYPBmXABThSJ821sqY',
+      images: [Array],
+      name: 'DAMN.',
+      release_date: '2017-04-14',
+      release_date_precision: 'day',
+      total_tracks: 14,
+      type: 'album',
+      uri: 'spotify:album:4eLPsYPBmXABThSJ821sqY'
+    },
+    artists: [ [Object] ],
+    available_markets: [
+      'AD', 'AE', 'AG', 'AL', 'AM', 'AO', 'AR', 'AT', 'AU', 'AZ',
+      'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BN',
+      'BO', 'BR', 'BS', 'BT', 'BW', 'BY', 'BZ', 'CA', 'CD', 'CG',
+      'CH', 'CI', 'CL', 'CM', 'CO', 'CR', 'CV', 'CW', 'CY', 'CZ',
+      'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'ES',
+      'FI', 'FJ', 'FM', 'FR', 'GA', 'GB', 'GD', 'GE', 'GH', 'GM',
+      'GN', 'GQ', 'GR', 'GT', 'GW', 'GY', 'HK', 'HN', 'HR', 'HT',
+      'HU', 'ID', 'IE', 'IL', 'IN', 'IQ', 'IS', 'IT', 'JM', 'JO',
+      'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KR', 'KW', 'KZ',
+      'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV',
+      ... 84 more items
+    ],
+    disc_number: 1,
+    duration_ms: 248613,
+    episode: false,
+    explicit: true,
+    external_ids: { isrc: 'USUM71703379' },
+    external_urls: {
+      spotify: 'https://open.spotify.com/track/0y9uTzK9cNKSAEHnpeRG8C'
+    },
+    href: 'https://api.spotify.com/v1/tracks/0y9uTzK9cNKSAEHnpeRG8C',
+    id: '0y9uTzK9cNKSAEHnpeRG8C',
+    is_local: false,
+    name: 'DUCKWORTH.',
+    popularity: 73,
+    preview_url: 'https://p.scdn.co/mp3-preview/40515280ad079bb32c1e7e713d082baf0625847f?cid=a0dd83f756e04dd2b07fca6e744efd19',
+    track: true,
+    track_number: 14,
+    type: 'track',
+    uri: 'spotify:track:0y9uTzK9cNKSAEHnpeRG8C'
+  },
+  video_thumbnail: { url: null }
+}
+#}

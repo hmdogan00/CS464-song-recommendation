@@ -1,3 +1,5 @@
+const { parse } = require('path');
+
 const express = require('express'),
   session = require('express-session'),
   passport = require('passport'),
@@ -91,6 +93,48 @@ app.get('/playlists', ensureAuthenticated, function (req, res) {
     res.render('playlists.html', {user: req.user, playlists:result.data})
   })
 })
+
+app.get('/recommend/:id', ensureAuthenticated, function (req, res) {
+  const pId = req.params.id;
+  axios.get(`https://api.spotify.com/v1/playlists/${pId}/tracks`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    }
+  }).then(result => {
+    res.render('recommend.html', {user: req.user, trackObj:result.data})
+  })
+})
+
+app.get('/recommendations', ensureAuthenticated, function (req, res){
+  res.render('recommendations.html', {user: req.user, token: token})
+})
+
+app.get('/recommend-knn', (req, res) => {
+  axios.get(`https://api.spotify.com/v1/audio-features/?ids=${req.query.ids}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    }
+  }).then(result => {
+    const recommendations = []
+    result.data.audio_features.forEach(track => {
+      const { spawn } = require('child_process'); 
+      const pyProg = spawn('/usr/local/bin/python3', ['./../models/knn.py', JSON.stringify(track)]);
+      pyProg.stdout.on('data', function(data) {
+        recommendations.push(data.toString());
+      });   
+      pyProg.stdout.on('end', function(data) {
+        const json = {
+          recommendations: JSON.stringify(recommendations),
+          token: token
+        }
+        res.write(JSON.stringify(json));
+        res.end();
+      });  
+    });
+  })
+});
 
 // GET /auth/spotify
 //   Use passport.authenticate() as route middleware to authenticate the
