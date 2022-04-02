@@ -1,11 +1,9 @@
-const { parse } = require('path');
-
 const express = require('express'),
   session = require('express-session'),
   passport = require('passport'),
   SpotifyStrategy = require('passport-spotify').Strategy,
   consolidate = require('consolidate');
-  axios = require('axios')
+  axios = require('axios');
 
 require('dotenv').config();
 
@@ -111,29 +109,36 @@ app.get('/recommendations', ensureAuthenticated, function (req, res){
 })
 
 app.get('/recommend-knn', (req, res) => {
-  axios.get(`https://api.spotify.com/v1/audio-features/?ids=${req.query.ids}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
-    }
-  }).then(result => {
-    const recommendations = []
-    result.data.audio_features.forEach(track => {
-      const { spawn } = require('child_process'); 
-      const pyProg = spawn('/usr/local/bin/python3', ['./../models/knn.py', JSON.stringify(track)]);
-      pyProg.stdout.on('data', function(data) {
-        recommendations.push(data.toString());
-      });   
-      pyProg.stdout.on('end', function(data) {
-        const json = {
-          recommendations: JSON.stringify(recommendations),
-          token: token
-        }
-        res.write(JSON.stringify(json));
-        res.end();
-      });  
-    });
-  })
+  const recommendations = []
+  try {
+    axios.get(`https://api.spotify.com/v1/audio-features/?ids=${req.query.ids}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    }).then(result => {
+      let length = result.data.audio_features.length;
+      let counter = 0;
+      result.data.audio_features.forEach(track => {
+        axios.put('http://localhost:5000/knn', { body: track }).then(result => { 
+          recommendations.push(result.data.result)
+          counter++;
+          if (counter === length){
+            console.log(recommendations)
+            const json = {
+              recommendations: recommendations,
+              token: token
+            }
+            res.write(JSON.stringify(json))
+            res.end()
+          }
+        })
+      });
+    })
+  }
+  catch (e) {
+    console.log(e)
+  }
 });
 
 // GET /auth/spotify

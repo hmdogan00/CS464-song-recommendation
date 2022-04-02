@@ -34,6 +34,7 @@
     
       const initialize = () => {
         const [array, token] = parseArray(localStorage.getItem('rec-ids'));
+        console.log(array)
         const ul = document.getElementById('list');
         let i = 1;
         for (id of array){
