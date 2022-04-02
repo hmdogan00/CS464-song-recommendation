@@ -140,7 +140,38 @@ app.get('/recommend-knn', (req, res) => {
     console.log(e)
   }
 });
-
+app.get('/recommend-pcaknn', (req, res) => {
+  const recommendations = []
+  try {
+    axios.get(`https://api.spotify.com/v1/audio-features/?ids=${req.query.ids}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    }).then(result => {
+      let length = result.data.audio_features.length;
+      let counter = 0;
+      result.data.audio_features.forEach(track => {
+        axios.put('http://localhost:5000/pcaknn', { body: track }).then(result => { 
+          recommendations.push(result.data.result)
+          counter++;
+          if (counter === length){
+            console.log(recommendations)
+            const json = {
+              recommendations: recommendations,
+              token: token
+            }
+            res.write(JSON.stringify(json))
+            res.end()
+          }
+        })
+      });
+    })
+  }
+  catch (e) {
+    console.log(e)
+  }
+});
 // GET /auth/spotify
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request. The first step in spotify authentication will involve redirecting
