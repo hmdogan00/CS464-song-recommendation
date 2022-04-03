@@ -1,7 +1,5 @@
 import numpy as np
-import sys
 import pandas as pd
-import json
 import os
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
@@ -22,11 +20,11 @@ def pcaknn(track):
   #standardize data befor PCA (normalize data)
   X = StandardScaler().fit_transform(X)
   #create PCA
-  pca = PCA(n_components=6) #look later
+  pca = PCA(n_components=3) #look later
   princ_comps = pca.fit_transform(X)
   #new dataset by using principle components
-  new_data = pd.DataFrame(data = princ_comps, columns=['PC1','PC2','PC3','PC4','PC5','PC6'])
-  new_features_used = new_data[['PC1','PC2','PC3','PC4','PC5','PC6']]
+  new_data = pd.DataFrame(data = princ_comps, columns=['PC1','PC2','PC3'])
+  new_features_used = new_data[['PC1','PC2','PC3']]
   original_data_all = np.array(new_features_used.values)
   original_data_all = np.c_[features_all["track_id"],original_data_all]
 
@@ -38,14 +36,9 @@ def pcaknn(track):
   original_data = np.array(original_data1,"float64")
 
 
-  train_data = original_data[:141420,:]
+  train_data = original_data[:,:]
 
-  test_data = original_data[141421:,:]
-
-  track_number = 0
-  track_selected = test_data[track_number,:]
-
-  selected = pca.transform(selected.reshape(1,-1))
+  selected = pca.transform(selected.reshape(1, -1))
 
   distances = np.linalg.norm(train_data - selected, axis=1) # to compute euclidean distance
 
@@ -53,5 +46,4 @@ def pcaknn(track):
 
   nearest_neighbors_ids = distances.argsort()[:k] # to find nearest two neighbors
 
-  print(original_data_all[:,0][nearest_neighbors_ids][0], original_data_all[:,0][nearest_neighbors_ids][1])
   return (original_data_all[:, 0][nearest_neighbors_ids][0], original_data_all[:, 0][nearest_neighbors_ids][1])

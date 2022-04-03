@@ -82,7 +82,7 @@ app.get('/login', function (req, res) {
 });
 
 app.get('/playlists', ensureAuthenticated, function (req, res) {
-  axios.get('https://api.spotify.com/v1/me/playlists', {
+  axios.get('https://api.spotify.com/v1/me/playlists?limit=50', {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + token
@@ -168,6 +168,8 @@ app.get('/recommend-pcaknn', (req, res) => {
             res.write(JSON.stringify(json))
             res.end()
           }
+        }).catch(e => {
+          console.error(e)
         })
       });
     })
