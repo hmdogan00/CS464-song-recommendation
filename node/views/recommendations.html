@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Spotify Example</title>
+	<title>Spotify Song Recommendations</title>
   <style>
     table, th, td {
       border: 1px solid black;
@@ -69,7 +69,7 @@
               ul.appendChild(tr);
             })
           })
-        }        
+        }      
         for (id of recArray){
           fetch('https://api.spotify.com/v1/tracks/'+id, {
             headers: {
