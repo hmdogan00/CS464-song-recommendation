@@ -25,7 +25,11 @@ def knn(track):
   original_data = np.array(original_data1,"float64")
 
 
-  train_data = original_data[:,:]
+  train_data = original_data[:141420,:]
+
+  test_data = original_data[141421:,:]
+  track_number = 0
+  track_selected = test_data[track_number,:]
 
   distances = np.linalg.norm(train_data - selected, axis=1) # to compute euclidean distance
 
