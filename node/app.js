@@ -124,7 +124,6 @@ app.get('/recommend-knn', (req, res) => {
           recommendations.push(result.data.result)
           counter++;
           if (counter === length){
-            console.log(recommendations)
             const json = {
               recommendations: recommendations,
               token: token
@@ -140,6 +139,7 @@ app.get('/recommend-knn', (req, res) => {
     console.log(e)
   }
 });
+
 app.get('/recommend-pcaknn', (req, res) => {
   const recommendations = []
   try {
@@ -172,6 +172,33 @@ app.get('/recommend-pcaknn', (req, res) => {
     console.log(e)
   }
 });
+
+app.get('/spotifyrecommendation', ensureAuthenticated, (req, res) => {
+  const idArr = req.query.ids.split(',');
+  const recommendations = [];
+  const length = idArr.length;
+  let counter = 0;
+  for (id of idArr){
+    axios.get(`https://api.spotify.com/v1/recommendations/?seed_tracks=${id}&limit=2`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    }).then(result => {
+      const recommendedTracks = result.data.tracks.map(track => track.id);
+      recommendations.push(recommendedTracks);
+      counter++;
+          if (counter === length){
+            const json = {
+              recommendations: recommendations,
+              token: token
+            }
+            res.write(JSON.stringify(json))
+            res.end()
+          }
+    })
+  }
+})
 // GET /auth/spotify
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request. The first step in spotify authentication will involve redirecting

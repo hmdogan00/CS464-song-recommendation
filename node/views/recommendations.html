@@ -34,8 +34,10 @@
     
       const initialize = () => {
         const [array, token] = parseArray(localStorage.getItem('rec-ids'));
+        const [recArray] = parseArray(localStorage.getItem('spotify-ids'));
         console.log(array)
         const ul = document.getElementById('list');
+        const ul2 = document.getElementById('list-2');
         let i = 1;
         for (id of array){
           fetch('https://api.spotify.com/v1/tracks/'+id, {
@@ -67,6 +69,37 @@
               ul.appendChild(tr);
             })
           })
+        }        
+        for (id of recArray){
+          fetch('https://api.spotify.com/v1/tracks/'+id, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            }
+          }).then(res => {
+            return res.text().then(text => {
+              track = JSON.parse(text);
+              const tr = document.createElement('tr');
+
+              const no = document.createElement('td');
+              no.innerHTML = i;
+              i++;
+              const name = document.createElement('td');
+              name.innerHTML = track.name
+
+              const album = document.createElement('td');
+              album.innerHTML = track.album.name
+
+              const artist = document.createElement('td');
+              artist.innerHTML = getArtistString(track.artists)
+
+              tr.appendChild(no);
+              tr.appendChild(name);
+              tr.appendChild(album);
+              tr.appendChild(artist);
+              ul2.appendChild(tr);
+            })
+          })
         }
       }
     
@@ -85,6 +118,18 @@
         </tr>
     </thead>
     <tbody id="list">
+    </tbody>
+    </table><p>Recommended Playlist:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Track Name</th>
+          <th>Album</th>
+          <th>Artist</th>
+        </tr>
+    </thead>
+    <tbody id="list-2">
     </tbody>
     </table>
 </body>
