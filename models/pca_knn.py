@@ -17,8 +17,6 @@ def pcaknn(track):
   #apply PCA
   Y = np.array(features_all.values)
   X = Y[:,4:]
-  #standardize data befor PCA (normalize data)
-  X = StandardScaler().fit_transform(X)
   #create PCA
   pca = PCA(n_components=3) #look later
   princ_comps = pca.fit_transform(X)
@@ -27,9 +25,6 @@ def pcaknn(track):
   new_features_used = new_data[['PC1','PC2','PC3']]
   original_data_all = np.array(new_features_used.values)
   original_data_all = np.c_[features_all["track_id"],original_data_all]
-
-  np.random.seed(1)
-  np.random.shuffle(original_data_all)
 
   original_data1 = original_data_all[:,1:]
 
