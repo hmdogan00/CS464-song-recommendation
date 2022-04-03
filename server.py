@@ -1,6 +1,7 @@
 from flask import Flask, request
 import json 
 from models.knn import knn
+from models.pca_knn import pcaknn
 
 app = Flask(__name__) 
   
@@ -23,7 +24,7 @@ def sum_of_arraypca():
 
     # Data variable contains the
     # data from the node server
-    result = knn(data)
+    result = pcaknn(data)
     # Return data in json format
     return json.dumps({"result": result})
    
