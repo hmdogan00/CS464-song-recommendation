@@ -60,6 +60,13 @@
       return res.text().then(text => {
         localStorage.setItem('rec-ids', text)
         window.location.href = '/recommendations'
+      }).then(res => {
+        fetch(`/spotifyrecommendation?ids=${s}`).then(res => { 
+          return res.text().then(text => {
+            localStorage.setItem('spotify-ids', text)
+            window.location.href = '/recommendations'
+          })
+        })
       });
     });
   }
