@@ -1,6 +1,7 @@
 /node/node_modules
 /node/.env
 .venv
-.env
 models/__pycache__
 .idea
+*.pyc
+.env
