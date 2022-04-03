@@ -141,7 +141,6 @@ app.get('/recommend-knn', (req, res) => {
 });
 
 app.get('/recommend-pcaknn', (req, res) => {
-  console.log("geldi")
   const recommendations = []
   try {
     axios.get(`https://api.spotify.com/v1/audio-features/?ids=${req.query.ids}`, {
@@ -152,15 +151,11 @@ app.get('/recommend-pcaknn', (req, res) => {
     }).then(result => {
       let length = result.data.audio_features.length;
       let counter = 0;
-      console.log("affet")
       result.data.audio_features.forEach(track => {
         axios.put('http://localhost:5000/pcaknn', { body: track }).then(result => { 
-          console.log("hami beni dövecek")
           recommendations.push(result.data.result)
-          console.log("yeminler olsun geldi")
           counter++;
           if (counter === length){
-            console.log(recommendations)
             const json = {
               recommendations: recommendations,
               token: token
