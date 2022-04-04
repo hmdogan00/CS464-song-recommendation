@@ -18,7 +18,7 @@ def pcaknn(track):
   Y = np.array(features_all.values)
   X = Y[:,4:]
   #create PCA
-  pca = PCA(n_components=3) #look later
+  pca = PCA(n_components=2) #look later
   princ_comps = pca.fit_transform(X)
   #new dataset by using principle components
   new_data = pd.DataFrame(data = princ_comps, columns=['PC1','PC2','PC3'])
