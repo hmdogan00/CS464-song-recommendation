@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 
 def cosineSimilarity(actual, predicted):
-    print(actual)
-    print(predicted)
     return np.dot(actual, predicted)/(np.linalg.norm(actual)*np.linalg.norm(predicted))
 
 def calculateRMSE(targets, predictions):
