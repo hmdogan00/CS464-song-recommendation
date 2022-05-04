@@ -62,10 +62,15 @@ def get_evaluation():
     knn_results = np.array(knn_results)
     spoti_results = np.array(spoti_results)
     
-    calculateEvaluations(spoti_results, knn_results)
+    eval_dict = calculateEvaluations(spoti_results, knn_results)
+    print(eval_dict)
+    df = pd.DataFrame(eval_dict).T
+    print(df)
+    mae_min = df[["MAE"]].idxmin()
+    rmse_min = df[["RMSE"]].idxmin()
 
     # Return data in json format
-    return json.dumps({"result": ids, "token":token})
+    return json.dumps({"mae_min": mae_min, "rmse_min":rmse_min, df:df})
     
    
 if __name__ == "__main__": 
