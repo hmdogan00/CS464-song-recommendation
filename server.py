@@ -10,10 +10,11 @@ app = Flask(__name__)
 @app.route('/knn', methods = ['PUT'])
 def sum_of_array():
     data = request.get_json()['body']
-
+    k = request.get_json()['k']
+    metric = request.get_json()['metric']
     # Data variable contains the
     # data from the node server
-    result = knn(data)
+    result = knn(data,k=int(k), dist_metric=metric)
     # Return data in json format
     return json.dumps({"result":result})
 

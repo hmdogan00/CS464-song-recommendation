@@ -20,6 +20,8 @@
 
   function getRecommendation(length){
     selectedArr = []
+    k = prompt('Please choose k hyperparameter:', '2')
+    metric = prompt('Select distance metric (euclidian, ...)', 'euclidian')
     for (i = 1; i <= length; i++){
       if (document.getElementById('check-'+i).checked){
         selectedArr.push(document.getElementById('track-'+i).innerHTML)
@@ -30,7 +32,7 @@
       s += e + ','
     });
     s = s.substring(0, s.length - 1)
-    fetch(`/recommend-knn?ids=${s}`).then(res => { 
+    fetch(`/recommend-knn?ids=${s}&k=${k}&metric=${metric}`).then(res => { 
       return res.text().then(text => {
         localStorage.setItem('rec-ids', text)
       }).then(res => {

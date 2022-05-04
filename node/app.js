@@ -81,6 +81,10 @@ app.get('/login', function (req, res) {
   res.render('login.html', {user: req.user});
 });
 
+app.get('/evaluate', function (req, res) {
+  res.render('evaluation.html', {user: req.user});
+});
+
 app.get('/playlists', ensureAuthenticated, function (req, res) {
   axios.get('https://api.spotify.com/v1/me/playlists?limit=50', {
     headers: {
@@ -120,7 +124,7 @@ app.get('/recommend-knn', (req, res) => {
       let length = result.data.audio_features.length;
       let counter = 0;
       result.data.audio_features.forEach(track => {
-        axios.put('http://localhost:5000/knn', { body: track }).then(result => { 
+        axios.put('http://localhost:5000/knn', { body: track, k:req.query.k, metric:req.query.metric }).then(result => { 
           recommendations.push(result.data.result)
           counter++;
           if (counter === length){
