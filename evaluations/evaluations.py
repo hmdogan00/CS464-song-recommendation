@@ -14,31 +14,30 @@ def calculateMAE(targets, predictions):
 
 def getKDictionary(targets, predictions):
     kDict = {
-        1: np.zeros((predictions.shape[0],9)),
-        2: np.zeros((predictions.shape[0],9)),
-        3: np.zeros((predictions.shape[0],9)),
-        4: np.zeros((predictions.shape[0],9)),
-        5: np.zeros((predictions.shape[0],9)),
-        6: np.zeros((predictions.shape[0],9)),
-        7: np.zeros((predictions.shape[0],9)),
-        8: np.zeros((predictions.shape[0],9)),
-        9: np.zeros((predictions.shape[0],9)),
-        10: np.zeros((predictions.shape[0],9)),
+        1: np.zeros((predictions.shape[0],predictions.shape[2])),
+        2: np.zeros((predictions.shape[0],predictions.shape[2])),
+        3: np.zeros((predictions.shape[0],predictions.shape[2])),
+        4: np.zeros((predictions.shape[0],predictions.shape[2])),
+        5: np.zeros((predictions.shape[0],predictions.shape[2])),
+        6: np.zeros((predictions.shape[0],predictions.shape[2])),
+        7: np.zeros((predictions.shape[0],predictions.shape[2])),
+        8: np.zeros((predictions.shape[0],predictions.shape[2])),
+        9: np.zeros((predictions.shape[0],predictions.shape[2])),
+        10: np.zeros((predictions.shape[0],predictions.shape[2])),
     }
 
     for j in range(predictions.shape[0]):
         predictionsKNN = predictions[j]
-        #predictionsSpotify = targets[j]
-        meanedSpotifyPrediction = targets[j]
+        spotifyPrediction = targets[j]
 
         sum = np.zeros(predictionsKNN.shape[1])
         for i in range(predictionsKNN.shape[0]):
             sum += predictionsKNN[i]
             kDict[i+1][j] = sum/(i+1)
 
-    return kDict, meanedSpotifyPrediction
+    return kDict, spotifyPrediction
 
-def knnEvaluate(kDictionary, spotifyMean):
+def knnEvaluate(kDictionary, spotifyPred):
     evalDict = {
         1: {
         "MAE": 0,
@@ -92,10 +91,10 @@ def knnEvaluate(kDictionary, spotifyMean):
         }
     }
     for i in range(1, 11):
-        evalDict[i]["RMSE"] = calculateRMSE(spotifyMean, kDictionary[i])
-        evalDict[i]["MAE"] = calculateMAE(spotifyMean, kDictionary[i])
+        evalDict[i]["RMSE"] = calculateRMSE(spotifyPred, kDictionary[i])
+        evalDict[i]["MAE"] = calculateMAE(spotifyPred, kDictionary[i])
         predictionArray = kDictionary[i]
-        actualArray = spotifyMean
+        actualArray = spotifyPred
         total = 0
         for j in range(predictionArray.shape[0]):
             total += cosineSimilarity(np.log(actualArray), np.log(predictionArray[j]))
@@ -106,8 +105,8 @@ def knnEvaluate(kDictionary, spotifyMean):
     return evalDict
 
 def calculateEvaluations(targets, predictions):
-    kDictionary, spotifyMean = getKDictionary(targets, predictions)
-    evalDictionary = knnEvaluate(kDictionary, spotifyMean)
+    kDictionary, spotifyPred = getKDictionary(targets, predictions)
+    evalDictionary = knnEvaluate(kDictionary, spotifyPred)
     return evalDictionary
 
 ourRecommendations = np.array([[[0.0297, 0.645, 0.63, 1.11e-05, 0.079, -7.017, 0.246, 174.663, 0.653],
