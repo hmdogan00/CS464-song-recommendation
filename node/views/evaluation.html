@@ -13,7 +13,7 @@
       const initialize = (tracks, token) => {
         const formdata = new FormData()
         //console.log(tracks.slice(0,tracks.indexOf(',')))
-        formdata.append('ids', tracks.slice(0,tracks.indexOf(',')))
+        formdata.append('ids', tracks)
         formdata.append('token', token)
         options = {
           method: 'POST',

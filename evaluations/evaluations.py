@@ -95,7 +95,7 @@ def knnEvaluate(kDictionary, spotifyPred):
         actualArray = spotifyPred
         total = 0
         for j in range(predictionArray.shape[0]):
-            total += cosineSimilarity(actualArray, predictionArray[j])
+            total += cosineSimilarity(actualArray, predictionArray[j])[0]
         total = total / predictionArray.shape[0]
 
         evalDict[i]["COS"] = total
