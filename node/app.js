@@ -81,8 +81,27 @@ app.get('/login', function (req, res) {
   res.render('login.html', {user: req.user});
 });
 
-app.get('/evaluate', function (req, res) {
-  res.render('evaluation.html', {user: req.user});
+app.get('/evaluate', ensureAuthenticated, function (req, res) {
+  axios.get('https://api.spotify.com/v1/me/top/tracks?limit=50&offset=0', {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    }
+  }).then(result => {
+    axios.get('https://api.spotify.com/v1/me/top/tracks?limit=50&offset=49', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    }).then(result2 => {
+      wholeTracks = result.data.items.concat(result2.data.items)
+      ids = wholeTracks.map(t => t.id)
+      res.render('evaluation.html', {user: req.user, tracks:ids, token:token});
+    })
+  }).catch(err => {
+    console.log(err.message)
+  })
+  
 });
 
 app.get('/playlists', ensureAuthenticated, function (req, res) {
@@ -212,7 +231,7 @@ app.get('/spotifyrecommendation', ensureAuthenticated, (req, res) => {
 app.get(
   '/auth/spotify',
   passport.authenticate('spotify', {
-    scope: ['playlist-read-private', 'user-read-private'],
+    scope: ['playlist-read-private', 'user-read-private', 'user-top-read'],
     showDialog: true,
   })
 );

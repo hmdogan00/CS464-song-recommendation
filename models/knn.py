@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import pandas as pd
 import os
-def knn(track, k=2, dist_metric='l2' ):
+def knn(track, k=2, dist_metric='euclidian', return_full=False):
   dirname = os.path.dirname(__file__)
   location = os.path.join(dirname, '../data/SpotifyFeatures.csv')
   
@@ -31,5 +31,8 @@ def knn(track, k=2, dist_metric='l2' ):
     distances = np.linalg.norm(train_data - selected, axis=1) # to compute euclidean distance
 
   nearest_neighbors_ids = distances.argsort()[:k] # to find nearest k neighbors
-  result = tuple(original_data_all[:,3][nearest_neighbors_ids][:k])
+  if return_full:
+    result = tuple(original_data_all[:,4:][nearest_neighbors_ids][:k])
+  else:
+    result = tuple(original_data_all[:,3][nearest_neighbors_ids][:k])
   return result
