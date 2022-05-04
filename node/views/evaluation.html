@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Spotify Song Recommendations</title>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+    </style>
+    <script>
+      const initialize = (tracks, token) => {
+        const formdata = new FormData()
+        //console.log(tracks.slice(0,tracks.indexOf(',')))
+        formdata.append('ids', tracks.slice(0,tracks.indexOf(',')))
+        formdata.append('token', token)
+        options = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json'},
+          mode: 'no-cors',
+          body: formdata
+        }
+        fetch("http://localhost:5000/eval", options)
+          .then(res => {
+            const load = document.getElementById('loading')
+            const fin = document.getElementById('finished')
+            load.classList.add('hidden')
+            fin.classList.remove('hidden')
+          });
+      };
+    </script>
+  </head>
+  <body onload="initialize('{{tracks}}', '{{token}}')">
+    <h1 id="loading">Evaluating...</h1>
+    <div id="finished" class="hidden">
+      Bittiiiiiii!
+    </div>
+  </body>
+  <style>
+    .hidden{
+      display:none;
+    }
+  </style>
+</html>
