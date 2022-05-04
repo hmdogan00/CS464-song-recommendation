@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 
 def cosineSimilarity(actual, predicted):
-    print(actual)
-    print(predicted)
     return np.dot(actual, predicted)/(np.linalg.norm(actual)*np.linalg.norm(predicted))
 
 def calculateRMSE(targets, predictions):
@@ -140,4 +138,6 @@ if __name__ == '__main__':
 
     evalDict = calculateEvaluations(spotifyRecommendations, ourRecommendations)
     df = pd.DataFrame(evalDict).T
+    print(df[["MAE"]].idxmin())
+    print(df[["RMSE"]])
     print(df)
