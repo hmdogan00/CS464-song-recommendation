@@ -21,8 +21,8 @@ def pcaknn(track):
   pca = PCA(n_components=2) #look later
   princ_comps = pca.fit_transform(X)
   #new dataset by using principle components
-  new_data = pd.DataFrame(data = princ_comps, columns=['PC1','PC2','PC3'])
-  new_features_used = new_data[['PC1','PC2','PC3']]
+  new_data = pd.DataFrame(data = princ_comps, columns=['PC1','PC2'])
+  new_features_used = new_data[['PC1','PC2']]
   original_data_all = np.array(new_features_used.values)
   original_data_all = np.c_[features_all["track_id"],original_data_all]
 
