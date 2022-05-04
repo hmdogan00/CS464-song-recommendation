@@ -7,6 +7,7 @@ import requests
 
 from models.knn import knn
 from models.pca_knn import pcaknn
+from evaluations.evaluations import calculateEvaluations
 
 app = Flask(__name__) 
   
@@ -60,8 +61,8 @@ def get_evaluation():
             
     knn_results = np.array(knn_results)
     spoti_results = np.array(spoti_results)
-    print(knn_results.shape)
-    print(spoti_results.shape)
+    
+    calculateEvaluations(spoti_results, knn_results)
 
     # Return data in json format
     return json.dumps({"result": ids, "token":token})
