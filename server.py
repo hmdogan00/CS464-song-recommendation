@@ -78,7 +78,7 @@ def get_evaluation():
     result = df.to_json(orient="split")
     parsed = json.loads(result)
     # Return data in json format
-    return json.dumps({"mae_min": mae_min, "rmse_min":rmse_min, df:parsed})
+    return json.dumps({"mae_min": mae_min, "rmse_min":rmse_min, "df":parsed})
     
    
 if __name__ == "__main__": 
