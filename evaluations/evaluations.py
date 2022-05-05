@@ -30,7 +30,7 @@ def getKDictionary(targets, predictions):
 
         sum = np.zeros(predictionsKNN.shape[1])
         for i in range(predictionsKNN.shape[0]):
-            sum += predictionsKNN[i]
+            sum = np.add(sum, predictionsKNN[i], casting='unsafe')
             kDict[i+1][j] = sum/(i+1)
 
     return kDict, spotifyPrediction
@@ -135,9 +135,9 @@ if __name__ == '__main__':
 
     [[ 8.58000e-02,  8.25000e-01,  6.72000e-01,  0.00000e+00,  1.23000e-01
     ,   -7.10800e+00,  4.18000e-01,  1.47010e+02,  2.46000e-01]]])
-
+    print(spotifyRecommendations.shape)
     evalDict = calculateEvaluations(spotifyRecommendations, ourRecommendations)
     df = pd.DataFrame(evalDict).T
     print(df[["MAE"]].idxmin())
-    print(df[["RMSE"]])
+    print(df[["RMSE"]].idxmin())
     print(df)
