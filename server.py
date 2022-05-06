@@ -67,14 +67,14 @@ def get_evaluation():
             
     knn_results = np.array(knn_results, dtype=np.float64)
     spoti_results = np.array(spoti_results, dtype=np.float64)
-    print(spoti_results.shape)
+    
     
     for i in range(knn_results.shape[0]):
         for j in range(knn_results.shape[2]):
             col = knn_results[i][:,j]
             knn_results[i][:,j] = (col - col.min()) / (col.max() - col.min())
     eval_dict = calculateEvaluations(spoti_results, knn_results)
-    print(eval_dict)
+    
     df = pd.DataFrame(eval_dict).T.values
     b_mae = df[:,0].argmin()+1
     b_rmse = df[:,1].argmin()+1
