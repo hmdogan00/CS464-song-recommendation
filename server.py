@@ -81,7 +81,6 @@ def get_evaluation():
     b_cos_i = df[:,2].argmax()+1
     b_cos_v = df[df[:,2].argmax(),2]
     
-    print('Worst k parameters for different metrics:')
     w_mae = df[:,0].argmax()+1
     w_rmse = df[:,1].argmax()+1
     w_cos_i = df[:,2].argmin()+1
