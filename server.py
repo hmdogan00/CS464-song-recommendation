@@ -69,16 +69,26 @@ def get_evaluation():
     spoti_results = np.array(spoti_results, dtype=np.float64)
     print(spoti_results.shape)
     
+    for i in range(knn_results.shape[0]):
+        for j in range(knn_results.shape[2]):
+            col = knn_results[i][:,j]
+            knn_results[i][:,j] = (col - col.min()) / (col.max() - col.min())
     eval_dict = calculateEvaluations(spoti_results, knn_results)
     print(eval_dict)
-    df = pd.DataFrame(eval_dict).T
-    print(df)
-    mae_min = df[["MAE"]].idxmin()
-    rmse_min = df[["RMSE"]].idxmin()
-    result = df.to_json(orient="split")
-    parsed = json.loads(result)
+    df = pd.DataFrame(eval_dict).T.values
+    b_mae = df[:,0].argmin()+1
+    b_rmse = df[:,1].argmin()+1
+    b_cos_i = df[:,2].argmax()+1
+    b_cos_v = df[df[:,2].argmax(),2]
+    
+    print('Worst k parameters for different metrics:')
+    w_mae = df[:,0].argmax()+1
+    w_rmse = df[:,1].argmax()+1
+    w_cos_i = df[:,2].argmin()+1
+    w_cos_v = df[df[:,2].argmin(),2]
     # Return data in json format
-    return json.dumps({"mae_min": mae_min, "rmse_min":rmse_min, "df":parsed})
+    return json.dumps({"best": {'mae':b_mae, 'rmse':b_rmse, 'cos_index':b_cos_i, 'cos_value':b_cos_v}, 
+                "worst":{'mae':w_mae, 'rmse':w_rmse, 'cos_index':w_cos_i, 'cos_value':w_cos_v}})
     
    
 if __name__ == "__main__": 

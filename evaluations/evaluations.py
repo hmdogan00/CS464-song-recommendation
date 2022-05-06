@@ -135,9 +135,19 @@ if __name__ == '__main__':
 
     [[ 8.58000e-02,  8.25000e-01,  6.72000e-01,  0.00000e+00,  1.23000e-01
     ,   -7.10800e+00,  4.18000e-01,  1.47010e+02,  2.46000e-01]]])
-    print(spotifyRecommendations.shape)
+    # normalize the data
+    for i in range(ourRecommendations.shape[0]):
+        for j in range(ourRecommendations.shape[2]):
+            col = ourRecommendations[i][:,j]
+            ourRecommendations[i][:,j] = (col - col.min()) / (col.max() - col.min())
     evalDict = calculateEvaluations(spotifyRecommendations, ourRecommendations)
-    df = pd.DataFrame(evalDict).T
-    print(df[["MAE"]].idxmin())
-    print(df[["RMSE"]].idxmin())
-    print(df)
+    df = pd.DataFrame(evalDict).T.values
+    print('Best k parameters for different metrics:')
+    print('MAE: k=',df[:,0].argmin()+1)
+    print('RMSE: k=',df[:,1].argmin()+1)
+    print('Cosine Similarity: k=',df[:,2].argmax()+1, ' Value=', df[df[:,2].argmax(),2])
+    
+    print('Worst k parameters for different metrics:')
+    print('MAE: k=',df[:,0].argmax()+1)
+    print('RMSE: k=',df[:,1].argmax()+1)
+    print('Cosine Similarity: k=',df[:,2].argmin()+1, ' Value=', df[df[:,2].argmin(),2])
