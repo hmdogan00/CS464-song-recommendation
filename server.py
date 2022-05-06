@@ -76,15 +76,15 @@ def get_evaluation():
     eval_dict = calculateEvaluations(spoti_results, knn_results)
     
     df = pd.DataFrame(eval_dict).T.values
-    b_mae = df[:,0].argmin()+1
-    b_rmse = df[:,1].argmin()+1
-    b_cos_i = df[:,2].argmax()+1
-    b_cos_v = df[df[:,2].argmax(),2]
+    b_mae = int(df[:,0].argmin()+1)
+    b_rmse = int(df[:,1].argmin()+1)
+    b_cos_i = int(df[:,2].argmax()+1)
+    b_cos_v = int(df[df[:,2].argmax(),2])
     
-    w_mae = df[:,0].argmax()+1
-    w_rmse = df[:,1].argmax()+1
-    w_cos_i = df[:,2].argmin()+1
-    w_cos_v = df[df[:,2].argmin(),2]
+    w_mae = int(df[:,0].argmax()+1)
+    w_rmse = int(df[:,1].argmax()+1)
+    w_cos_i = int(df[:,2].argmin()+1)
+    w_cos_v = int(df[df[:,2].argmin(),2])
     # Return data in json format
     return json.dumps({"best": {'mae':b_mae, 'rmse':b_rmse, 'cos_index':b_cos_i, 'cos_value':b_cos_v}, 
                 "worst":{'mae':w_mae, 'rmse':w_rmse, 'cos_index':w_cos_i, 'cos_value':w_cos_v}})
