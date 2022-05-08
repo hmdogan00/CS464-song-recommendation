@@ -50,7 +50,6 @@ def NN(track, learning_rate= 0.001,batch_size = 64,num_epochs=20,return_full=Fal
     
     # setting device as GPU if available, else CPU
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print('Using device:', device)
 
     # Load Training and Test data
     dirname = os.path.dirname(__file__)
@@ -143,7 +142,7 @@ def NN(track, learning_rate= 0.001,batch_size = 64,num_epochs=20,return_full=Fal
         nearest_ids.append(nearest_neighbors_ids)
 
     if return_full:
-        result = tuple(original_data_all[:, 4:][nearest_neighbors_ids][:k])
+        result = tuple(original_data_all[:,4:][nearest_neighbors_ids][:k])
     else:
         result = tuple(original_data_all[:, 3][nearest_neighbors_ids][:k])
     return result

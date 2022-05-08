@@ -69,6 +69,8 @@ def get_evaluation():
     pca_n_5 = []
     pca_spotify_n_5 = []
     spoti_results = []
+
+    nn_results = []
     for i, track in df.iterrows():
         knn_results.append(knn(track, k=10, return_full=True))
         recoms = requests.get(url=('https://api.spotify.com/v1/recommendations/?seed_tracks='+data['audio_features'][i]['id']+'&limit=1'), headers=header)
@@ -103,6 +105,8 @@ def get_evaluation():
         pca_n_5.append(res)
         pca_spotify_n_5.append(pca.transform(np.array(tmp).reshape(1, -1)))
 
+        nn_results.append(NN(track, return_full=True))
+
         print(i+1)
             
     knn_results = np.array(knn_results, dtype=np.float64)
@@ -115,18 +119,23 @@ def get_evaluation():
     pca_spotify_n_4 = np.array(pca_spotify_n_4, dtype=np.float64)
     pca_n_5 = np.array(pca_n_5, dtype=np.float64)
     pca_spotify_n_5 = np.array(pca_spotify_n_5, dtype=np.float64)
+    nn_results = np.array(nn_results, dtype=np.float64)
     
     for i in range(knn_results.shape[0]):
         for j in range(knn_results.shape[2]):
             col = knn_results[i][:,j]
             knn_results[i][:,j] = (col - col.min()) / (col.max() - col.min())
+            col3 = nn_results[i][:,j]
+            nn_results[i][:,j] = (col3 - col3.min()) / (col3.max() - col3.min())
     eval_dict = calculateEvaluations(spoti_results, knn_results)
     eval_dict_pca2 = calculateEvaluations(pca_spotify_n_2, pca_n_2)
     eval_dict_pca3 = calculateEvaluations(pca_spotify_n_3, pca_n_3)
     eval_dict_pca4 = calculateEvaluations(pca_spotify_n_4, pca_n_4)
     eval_dict_pca5 = calculateEvaluations(pca_spotify_n_5, pca_n_5)
+    eval_dict_nn = calculateEvaluations(spoti_results, nn_results)
     
-    df = pd.DataFrame(eval_dict).T.values
+    df = pd.DataFrame(eval_dict_nn).T.values
+    print(df)
     df_pca2 = pd.DataFrame(eval_dict_pca2).T.values
     df_pca3 = pd.DataFrame(eval_dict_pca3).T.values
     df_pca4 = pd.DataFrame(eval_dict_pca4).T.values
@@ -142,7 +151,13 @@ def get_evaluation():
     w_cos_i = int(df[:,2].argmin()+1)
     w_cos_v = int(df[df[:,2].argmin(),2])
 
+    print('FEATURE EXTRACTION - NEURAL NETWORK')
+    print('Best k parameters for different metrics:')
+    print('MAE: k=',df[:,0].argmin()+1, ' Value=', df[df[:,0].argmax(),0])
+    print('RMSE: k=',df[:,1].argmin()+1, ' Value=', df[df[:,1].argmax(),1])
+    print('Cosine Similarity: k=',df[:,2].argmax()+1, ' Value=', df[df[:,2].argmax(),2])
 
+    """ 
     print('ONLY KNN')
     print('Best k parameters for different metrics:')
     print('MAE: k=',df[:,0].argmin()+1, ' Value=', df[df[:,0].argmax(),0])
@@ -195,7 +210,7 @@ def get_evaluation():
     print('Worst k parameters for different metrics:')
     print('MAE: k=',df_pca5[:,0].argmax()+1, ' Value=', df_pca5[df_pca5[:,0].argmax(),0])
     print('RMSE: k=',df_pca5[:,1].argmax()+1, ' Value=', df_pca5[df_pca5[:,1].argmax(),1])
-    print('Cosine Similarity: k=',df_pca5[:,2].argmin()+1, ' Value=', df_pca5[df_pca5[:,2].argmin(),2])
+    print('Cosine Similarity: k=',df_pca5[:,2].argmin()+1, ' Value=', df_pca5[df_pca5[:,2].argmin(),2]) """
     # Return data in json format
     return json.dumps({"best": {'mae':b_mae, 'rmse':b_rmse, 'cos_index':b_cos_i, 'cos_value':b_cos_v}, 
                 "worst":{'mae':w_mae, 'rmse':w_rmse, 'cos_index':w_cos_i, 'cos_value':w_cos_v}})
