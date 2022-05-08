@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-def pcaknn(track):
+def pcaknn(track, k=10, n=3,return_full=False):
   dirname = os.path.dirname(__file__)
   location = os.path.join(dirname, '../data/SpotifyFeatures.csv')
   selected = np.array([track['acousticness'], track['danceability'], track['energy'], track['instrumentalness'], track['liveness'], track['loudness'], track['speechiness'], track['tempo'], track['valence']], dtype='float64')
@@ -18,12 +18,11 @@ def pcaknn(track):
   Y = np.array(features_all.values)
   X = Y[:,4:]
   #create PCA
-  pca = PCA(n_components=2) #look later
+  pca = PCA(n_components=n)
   princ_comps = pca.fit_transform(X)
   #new dataset by using principle components
-  new_data = pd.DataFrame(data = princ_comps, columns=['PC1','PC2'])
-  new_features_used = new_data[['PC1','PC2']]
-  original_data_all = np.array(new_features_used.values)
+  new_data = pd.DataFrame(data = princ_comps)
+  original_data_all = np.array(new_data.values)
   original_data_all = np.c_[features_all["track_id"],original_data_all]
 
   original_data1 = original_data_all[:,1:]
@@ -37,8 +36,9 @@ def pcaknn(track):
 
   distances = np.linalg.norm(train_data - selected, axis=1) # to compute euclidean distance
 
-  k = 2
-
   nearest_neighbors_ids = distances.argsort()[:k] # to find nearest two neighbors
-
-  return (original_data_all[:, 0][nearest_neighbors_ids][0], original_data_all[:, 0][nearest_neighbors_ids][1])
+  if return_full:
+    result = {'result':tuple(original_data_all[:,1:][nearest_neighbors_ids][:k]), 'pca':pca}
+  else:
+    result = tuple(original_data_all[:,0][nearest_neighbors_ids][:k])
+  return result
