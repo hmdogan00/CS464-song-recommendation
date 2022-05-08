@@ -8,6 +8,7 @@ from sklearn.decomposition import PCA
 
 from models.knn import knn
 from models.pca_knn import pcaknn
+from models.NN import NN
 from evaluations.evaluations import calculateEvaluations
 
 app = Flask(__name__) 
@@ -33,6 +34,16 @@ def get_pcaknn():
     # Data variable contains the
     # data from the node server
     result = pcaknn(data)
+    # Return data in json format
+    return json.dumps({"result": result})
+
+@app.route('/nn', methods=['PUT'])
+def get_nn():
+    data = request.get_json()['body']
+
+    # Data variable contains the
+    # data from the node server
+    result = NN(data)
     # Return data in json format
     return json.dumps({"result": result})
 

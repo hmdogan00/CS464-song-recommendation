@@ -71,6 +71,31 @@
       });
     });
   }
+    function getRecommendationNN(length){
+    selectedArr = []
+    for (i = 1; i <= length; i++){
+      if (document.getElementById('check-'+i).checked){
+        selectedArr.push(document.getElementById('track-'+i).innerHTML)
+      }
+    }
+    s = ''
+    selectedArr.forEach(e => {
+      s += e + ','
+    });
+    s = s.substring(0, s.length - 1)
+    fetch(`/recommend-nn?ids=${s}`).then(res => {
+      return res.text().then(text => {
+        localStorage.setItem('rec-ids', text)
+      }).then(res => {
+        fetch(`/spotifyrecommendation?ids=${s}`).then(res => {
+          return res.text().then(text => {
+            localStorage.setItem('spotify-ids', text)
+            window.location.href = '/recommendations'
+          })
+        })
+      });
+    });
+  }
 </script>
 <p>Tracks:</p>
 <div style="display: flex; flex-direction: row;">
@@ -88,6 +113,7 @@
     <label id="count">0</label><label>/10 Selected</label>
     <button onclick="getRecommendation('{{trackObj.items | length}}')">Recommend</button>
     <button onclick="getRecommendationPCA('{{trackObj.items | length}}')">Recommend PCA</button>
+      <button onclick="getRecommendationNN('{{trackObj.items | length}}')">Recommend NN</button>
   </div>
 </div>
 {% endblock %}
